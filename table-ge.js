@@ -310,6 +310,7 @@
 	};
 
 	var  batchOperationLayout= function(toolbarLayout, btns) {
+		var div = $("<div/>").addClass("toolbarBtns");
 		for (var j in btns) {
 			var b = btns[j];
 			if (!b.id || b.id == "") {
@@ -319,11 +320,16 @@
 			if (b.styleClass) {
 				btn.addClass(b.styleClass);
 			}
-			toolbarLayout.append(btn);
+			div.append(btn);
 		}
+		toolbarLayout.append(div);
 	};
 	var toolbarBtnsLayout = function(toolbarLayout,btns){
 		var n = 0;
+		var div = toolbarLayout.find(".toolbarBtns");
+		if(div.length==0){
+			div = $("<div/>").addClass("toolbarBtns");
+		}
 		for (var j in btns) {
 			var b = btns[j];
 			b.id = "toolbar_op_"+n+""+ new Date().valueOf();
@@ -335,9 +341,84 @@
 			{
 				btn.click(b.click);
 			}
-			toolbarLayout.append(btn);
+			div.append(btn);
 			n++;
 		}
+		toolbarLayout.append(div);
+	};
+
+	var toolbarQueryLayout = function(toolbarLayout,opts){
+		var query = opts.toolbar.query;
+		var div =null;
+        var btns = toolbarLayout.find(".toolbarBtns");
+		var inputs = query.input;
+		var selects=query.select;
+        var size =inputs?inputs.length:0;
+        var s = selects?selects.length:0;
+        if((size+s)<=5){
+            div = btns;
+        }else{
+            div = $("<div/>").addClass("toolbarQuery");
+            if(btns.length>0){
+                div.addClass("has-btns");
+            }
+        }
+		if(inputs){
+            for( var n in inputs){
+                var fi=inputs[n];
+                $("<input/>").addClass("query_").attr("type","text").attr("name",fi.name).attr("placeholder",fi.placeholder).appendTo(div);
+            }
+        }
+
+		if(selects){
+			var sel = $("<select/>").attr("name",fs.name);
+			for(var n in selects){
+				var fs=selects[n];
+				if(typeof fs.ajax=="object"){
+					var opv = fs.optionValue;
+					var opn=fs.optionName;
+					fs.ajax.success=function(res){
+						var ops = res.obj;
+						if(res.code==0){
+							for(var j in ops){
+								var obj=ops[j];
+								var op = $("<option value='"+obj[opv]+"'>"+obj[opn]+"</option>");
+								sel.append(op);
+							}
+						}
+					};
+					fs.ajax.error=function(){
+						$.toast("服务器异常");
+					};
+					$.ajax(fs.ajax);
+				}else{
+					var options=fs.options;
+					for(var m in options){
+						var o=options[m];
+						for(var mo in o){
+							var op = $("<option value='"+mo+"'>"+o[mo]+"</option>");
+							sel.append(op);
+						}
+					}
+				}
+			}
+			div.append(sel);
+		}
+
+		var dosearch=$("<span/>").addClass("btn btn-primary").text("查询");
+        dosearch.click(function(){
+            div.find("input").each(function(){
+                 var i = $(this);
+                opts.ajax.data[i.attr("name")]= i.val();
+            });
+            div.find("select").each(function(){
+               var s = $(this);
+                opts.ajax.data[s.attr("name")]= s.val();
+            });
+            getAjaxData(opts);
+        });
+		div.append(dosearch);
+		toolbarLayout.append(div);
 	};
 
 	var tableGe = win.tableGe = function(container, opts) {
@@ -371,7 +452,16 @@
 				}
 			}
 			if(toolbar.btns){
+				if(!table.hasClass("has-toolbar")){
+					table.addClass("has-toolbar");
+				}
 				toolbarBtnsLayout(toolbarLayout,toolbar.btns);
+			}
+			if(toolbar.query){
+				if(!table.hasClass("has-toolbar")){
+					table.addClass("has-toolbar");
+				}
+				toolbarQueryLayout(toolbarLayout,opts);
 			}
 		}
 		tableContainer.append(table);
@@ -386,17 +476,7 @@
 			var daymicLi=$("<li/>");
 			var daymic=$("<ul/>").addClass("daymic-pages");
 			daymicLi.append(daymic);
-			//var nextPage = $("<button class='btn btn-default next-page' disabled='disabled'>下一页</button> ");
-			//var info = $(" <span class = 'page-info'>0,1/1</span>");
-			//var prePage = $("<button class='btn btn-default pre-page' disabled='disabled'>上一页</button> ");
-			//var jumpInput = $(" <input type = 'text' class = 'input-default jump-input' disabled='disabled' placeholder = '跳转到'> ");
-			//var jumpButton = $(" <button class = 'btn btn-default jump-to-page' disabled='disabled' > 跳转 </button>");
 			paginationLayout.append(ul.append(first).append(pre).append(daymicLi).append(next).append(last));
-			//paginationLayout.append(prePage)
-			//	.append(info)
-			//	.append(nextPage)
-			//	.append(jumpInput)
-			//	.append(jumpButton);
 			tableContainer.append(paginationLayout);
 		}
 		container.append(tableContainer);
