@@ -52,8 +52,22 @@
 	border-radius: 4px 4px 0 0;
 	font-size: 0;
 }
+.table-ge-toolbar .toolbarQuery{
+	font-size: 100%;
+}
+.table-ge-toolbar .toolbarQuery.has-btns{
+	margin-top:5px;
+}
+.table-ge-toolbar .toolbarQuery input,.table-ge-toolbar .toolbarQuery select{
+	margin-left: 5px;
+}
+.table-ge-toolbar .toolbarQuery input:first-child{
+	margin-left: 0px;
+}
 .table-ge-toolbar .btn{
 	margin-left: 5px;
+	vertical-align: middle;
+	cursor: pointer;
 }
 .table-ge-toolbar .btn:first-child{
 	margin-left: 0px;
