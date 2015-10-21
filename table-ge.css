@@ -58,18 +58,32 @@
 .table-ge-toolbar .toolbarQuery.has-btns{
 	margin-top:5px;
 }
-.table-ge-toolbar .toolbarQuery input,.table-ge-toolbar .toolbarQuery select{
+.table-ge-toolbar  input,.table-ge-toolbar  select{
 	margin-left: 5px;
 }
-.table-ge-toolbar .toolbarQuery input:first-child{
-	margin-left: 0px;
-}
+
 .table-ge-toolbar .btn{
 	margin-left: 5px;
 	vertical-align: middle;
 	cursor: pointer;
 }
-.table-ge-toolbar .btn:first-child{
+.table-ge-toolbar .query-inputs,.table-ge-toolbar .query-selects{
+	display: inline-block;
+	vertical-align: middle;
+}
+.table-ge-toolbar .query-inputs span.date-select-span{
+	margin-left: 5px;
+}
+.table-ge-toolbar .query-inputs span.date-select-span input{
+	margin-left: 0 !important;
+}
+.table-ge-toolbar .toolbarBtns.no-query-bar input:first-child,.table-ge-toolbar .toolbarBtns.no-query-bar span.date-select-span:first-child{
+	margin-left: 5px;
+}
+.table-ge-toolbar .query-inputs span.date-select-span:first-child{
+	margin-left: 0px;
+}
+.table-ge-toolbar .btn:first-child,.table-ge-toolbar input:first-child,.table-ge-toolbar select:first-child{
 	margin-left: 0px;
 }
 table.table-ge {
